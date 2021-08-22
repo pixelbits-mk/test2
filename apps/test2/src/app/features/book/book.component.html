@@ -1,3 +1,9 @@
 <p>
   book works!
 </p>
+<pre>
+  {{ user$ | async | json }}
+</pre>
+<ng-container *ngIf="user$ | async as user">
+  <img [src]="user.providerData[0]?.photoURL" alt="" />
+</ng-container>

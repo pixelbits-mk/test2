@@ -1,4 +1,8 @@
 <div class="login-container">
+  <div>
+    <button (click)="onGoogleLogin()" mat-raised-button color="primary">Login with Google</button>
+  </div>
+
   <form [formGroup]="formGroup">
     <mat-form-field class="username" appearance="fill">
       <mat-label>Email</mat-label>
