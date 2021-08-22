@@ -1,1 +1,9 @@
-<router-outlet></router-outlet>
+<header>
+  <ng-container *ngIf="isAuthenticated$ | async">
+    <button (click)="logout()" class='logout' mat-raised-button>Logout</button>
+  </ng-container>
+</header>
+<main>
+  <router-outlet></router-outlet>
+</main>
+{{ isAuthenticated$ | async }}

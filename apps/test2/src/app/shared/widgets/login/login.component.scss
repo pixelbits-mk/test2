@@ -1,0 +1,13 @@
+.login-container {
+    padding: 1rem;
+    background: #efefef;
+    border: solid 1px lightgray;
+    max-width: 400px;
+    .username {
+        display: block;
+    }
+    .password {
+        display: block;
+
+    }
+}

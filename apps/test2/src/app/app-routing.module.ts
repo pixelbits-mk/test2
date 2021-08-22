@@ -1,9 +1,7 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { AngularFireAuthGuard, hasCustomClaim, redirectUnauthorizedTo, redirectLoggedInTo  } from '@angular/fire/auth-guard';
+import { AngularFireAuthGuard, redirectLoggedInTo  } from '@angular/fire/auth-guard';
 import { LoginComponent } from "./shared/widgets/login/login.component";
-const adminOnly = () => hasCustomClaim('admin');
-const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
 const redirectLoggedInToBooks = () => redirectLoggedInTo(['books']);
 
 // { path: 'login', component: LoginComponent,        canActivate: [AngularFireAuthGuard], data: { authGuardPipe: redirectLoggedInToItems }},
@@ -13,9 +11,13 @@ const redirectLoggedInToBooks = () => redirectLoggedInTo(['books']);
 
 
 export const routes: Routes = [
+    {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'books'
+    },
     { 
-        path: '', 
-        pathMatch: 'full', 
+        path: 'books', 
         loadChildren: () => import('./features/book/book.module').then(t => t.BookModule )
     },
     {
