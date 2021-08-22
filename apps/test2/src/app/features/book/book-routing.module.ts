@@ -38,6 +38,9 @@ import firebase from 'firebase/app'
 
 const loggedInThenRedirect = pipe(
     switchMap((t: firebase.User) => {
+        customClaims(of(t)).subscribe(y => {
+            console.log('claims', y)
+        })
         if (!t) {
             return of(['login'])
         }
