@@ -5,5 +5,5 @@
   {{ user$ | async | json }}
 </pre>
 <ng-container *ngIf="user$ | async as user">
-  <img [src]="user.providerData[0]?.photoURL" alt="" />
+  <img [src]="user.photoURL" alt="" />
 </ng-container>

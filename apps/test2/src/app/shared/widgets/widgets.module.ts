@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MaterialModule } from "../material/material.module";
 import { LoginComponent } from "./login/login.component";
+import { UnauthorizedComponent } from "./unauthorized/unauthorized.component";
 
 @NgModule({
     imports: [
@@ -9,10 +10,12 @@ import { LoginComponent } from "./login/login.component";
         ReactiveFormsModule
     ],
     declarations: [
-        LoginComponent
+        LoginComponent,
+        UnauthorizedComponent
     ],
     exports: [
-        LoginComponent
+        LoginComponent,
+        UnauthorizedComponent
     ]
 
 })

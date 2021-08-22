@@ -1,8 +1,55 @@
 import { NgModule } from "@angular/core";
-import { AngularFireAuthGuard, redirectUnauthorizedTo } from "@angular/fire/auth-guard";
+import { AngularFireAuthGuard, AuthPipe, customClaims, hasCustomClaim, loggedIn, redirectUnauthorizedTo } from "@angular/fire/auth-guard";
 import { RouterModule, Routes } from "@angular/router";
+import { iif, of, pipe } from "rxjs";
+import { map, switchMap, tap } from "rxjs/operators";
 import { BookComponent } from "./book.component";
-const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
+import firebase from 'firebase/app'
+
+//const adminOnly = () => hasCustomClaim('admin');
+// export const redirectUnauthorizedTo = (redirect: any[]) => pipe(map((user: firebase.User) => {
+//     if (!user) {
+//         return redirect
+//     }
+//     const idTokenResult = user.getIdTokenResult() 
+
+//     return true
+// }));
+// const redirectUnauthorizedTo: (t: unknown[]) => unknown = (redirect: unknown[]) => 
+//     pipe(
+//         map(customClaims),
+//         tap(t => console.log(t))
+
+//     )
+
+
+// const redirectUnauthorizedToLogin = () => switchMap((user: firebase.User) => {
+
+//     // if (!user) {
+//     //     return of(['login'])
+//     // }
+//     // return hasCustomClaim('admin')(of(user)).pipe(map(t => {
+//     //     if (t) {
+//     //         return true
+//     //     }
+//     //     return ['unauthorized']
+//     // }))
+// })
+
+const loggedInThenRedirect = pipe(
+    switchMap((t: firebase.User) => {
+        if (!t) {
+            return of(['login'])
+        }
+        return hasCustomClaim('admin')(of(t)).pipe(
+            map(x => !x ?  ['unauthorized'] : true)
+        )
+
+    }),
+    tap(t => console.log(t))
+)
+
+
 
 export const routes: Routes = [
     { 
@@ -11,7 +58,7 @@ export const routes: Routes = [
         canActivate: [
             AngularFireAuthGuard
         ],
-        data: { authGuardPipe: redirectUnauthorizedToLogin }
+        data: { authGuardPipe: () => loggedInThenRedirect }
     }
 ]
 @NgModule({
