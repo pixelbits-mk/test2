@@ -47,7 +47,7 @@ export const makeUppercase = functions.firestore.document(
       // Setting an 'uppercase' field in Firestore document returns a Promise.
       return snap.ref.set({uppercase}, {merge: true});
     });
-export const addAdmin = functions.https.onCall((data, context) => {
+export const addModerator = functions.https.onCall((data, context) => {
   if (context && context.auth && context.auth.token.moderator !== true) { // 1
     return {
       error:
@@ -57,6 +57,23 @@ export const addAdmin = functions.https.onCall((data, context) => {
   } // 2
   const email = data.email; // 3
   return grantModeratorRole(email).then(() => {
+    return {
+      result: `Request fulfilled! ${email} is now a
+                moderator.`,
+    };
+  }); // 4
+});
+
+export const addAdmin = functions.https.onCall((data, context) => {
+  if (context && context.auth && context.auth.token.moderator !== true) { // 1
+    return {
+      error:
+            "Request not authorized. User must be" +
+            " a moderator to fulfill request.",
+    };
+  } // 2
+  const email = data.email; // 3
+  return grantAdminRole(email).then(() => {
     return {
       result: `Request fulfilled! ${email} is now a
                 moderator.`,
@@ -78,3 +95,19 @@ async function grantModeratorRole(email: string) {
     moderator: true,
   }); // 3
 }
+
+/**
+ * Adds two numbers together.
+ * @param {string} email The first number.
+ * @return {int} The sum of the two numbers.
+ */
+async function grantAdminRole(email: string) {
+  const user = await admin.auth().getUserByEmail(email); // 1
+  if (user.customClaims && user.customClaims.admin === true) {
+    return;
+  } // 2
+  return admin.auth().setCustomUserClaims(user.uid, {
+    admin: true,
+  }); // 3
+}
+

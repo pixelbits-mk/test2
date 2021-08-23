@@ -14,7 +14,7 @@ export class AppComponent {
   }
   onClick() {
     alert('click')
-    this.addAdmin({ email: 'kang.mike@gmail.com' }).toPromise().then(t => {
+    this.addAdmin({ email: 'pixelbits100@gmail.com' }).toPromise().then(t => {
       alert('success')
     }, err => {
       console.log(err)

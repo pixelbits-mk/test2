@@ -1,6 +1,10 @@
 <p>
   book works!
 </p>
+<div *ngFor="let book of books$ | async">
+  {{ book.name }}
+</div>
+<button (click)="onClick()">Add Book</button>
 <pre>
   {{ user$ | async | json }}
 </pre>

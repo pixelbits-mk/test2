@@ -1,3 +1,9 @@
 <p>
   unauthorized works!
 </p>
+<pre>
+  {{ user$ | async | json }}
+</pre>
+<ng-container *ngIf="user$ | async as user">
+  <img [src]="user.photoURL" alt="" />
+</ng-container>
