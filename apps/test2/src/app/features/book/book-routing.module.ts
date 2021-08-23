@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { AngularFireAuthGuard, AuthPipe, customClaims, hasCustomClaim, loggedIn, redirectUnauthorizedTo } from "@angular/fire/auth-guard";
 import { RouterModule, Routes } from "@angular/router";
-import { iif, of, pipe } from "rxjs";
+import { forkJoin, iif, of, pipe } from "rxjs";
 import { map, switchMap, tap } from "rxjs/operators";
 import { BookComponent } from "./book.component";
 import firebase from 'firebase/app'
@@ -38,15 +38,41 @@ import firebase from 'firebase/app'
 
 const loggedInThenRedirect = pipe(
     switchMap((t: firebase.User) => {
-        customClaims(of(t)).subscribe(y => {
-            console.log('claims', y)
-        })
-        if (!t) {
-            return of(['login'])
-        }
-        return hasCustomClaim('admin')(of(t)).pipe(
-            map(x => !x ?  ['unauthorized'] : true)
+        return forkJoin([
+            loggedIn(of(t)),
+            customClaims(of(t)),
+            hasCustomClaim('admin')(of(t)),
+            hasCustomClaim('moderator')(of(t)),
+        ]).pipe(
+            map(([isLoggedIn, customClaimList, admin, moderator]) => {
+                return {
+                    loggedIn: isLoggedIn,
+                    customClaims: customClaimList,
+                    admin, 
+                    moderator
+                }
+            }),
+            map((t) => {
+                console.log(t)
+                if (t.admin) {
+                    return true
+                }
+                if (!t.loggedIn) {
+                    return ['login']
+                }
+                return ['unauthorized']
+            })
+
         )
+        // customClaims(of(t)).subscribe(y => {
+        //     console.log('claims', y)
+        // })
+        // if (!t) {
+        //     return of(['login'])
+        // }
+        // return hasCustomClaim('admin')(of(t)).pipe(
+        //     map(x => !x ?  ['unauthorized'] : true)
+        // )
 
     }),
     tap(t => console.log(t))
